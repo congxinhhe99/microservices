@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service-route
+          uri: lb://auth-service  # Sử dụng load-balancer cho auth-service qua Eureka
+          predicates:
+            - Path=/auth/**  # Tất cả các yêu cầu bắt đầu với /auth sẽ chuyển đến auth-service
+          filters:
+            - RewritePath=/auth/(?<segment>.*), /${segment}  # Loại bỏ /auth khi chuyển tiếp
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/account/**  # Chuyển tiếp tới account-service qua /account/*
+          filters:
+            - RewritePath=/account/(?<segment>.*), /${segment}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/  # URL của Eureka server
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 30
+    refresh-interval-seconds: 30
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG  # Để bật log của Gateway
+    org.springframework.web: DEBUG  # Để bật log của HTTP requests
