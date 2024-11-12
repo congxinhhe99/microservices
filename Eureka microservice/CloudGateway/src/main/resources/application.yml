@@ -8,11 +8,11 @@ spring:
     gateway:
       routes:
         - id: auth-service-route
-          uri: lb://auth-service  # Sử dụng load-balancer cho auth-service qua Eureka
+          uri: lb://auth-service   # Sử dụng load-balancer cho auth-service qua Eureka
           predicates:
             - Path=/auth/**  # Tất cả các yêu cầu bắt đầu với /auth sẽ chuyển đến auth-service
-          filters:
-            - RewritePath=/auth/(?<segment>.*), /${segment}  # Loại bỏ /auth khi chuyển tiếp
+#          filters:
+#            - RewritePath=/auth/(?<segment>.*), /${segment}  # Loại bỏ /auth khi chuyển tiếp
         - id: account-service
           uri: lb://account-service
           predicates:
